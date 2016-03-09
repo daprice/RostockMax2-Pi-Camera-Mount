@@ -1,0 +1,3 @@
+[submodule "lib/PiHole"]
+	path = lib/PiHole
+	url = https://github.com/daprice/PiHole.git
