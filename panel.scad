@@ -31,9 +31,17 @@ panelHeight = 113;
 //the thickness of the Rostock Max side panel
 panelThickness = 6;
 
+/* [Raspberry Pi options] */
+
+//whether to include bits for camera mounting
+camera = "Pi Camera"; // [No camera, Pi Camera]
+
+//Raspberry Pi version
+piVersion = "3B"; // [1B, 1B+, 1A+, 2B, 3B, Zero]
+
 
 include <MCAD/boxes.scad> //used for the base shape of the RoMax side panel
-include <lib/PiHole/PiHole.scad> //used for the raspberry pi mount
+use <lib/PiHole/PiHole.scad> //used for the raspberry pi mount
 
 difference() {
 	//basic shape of romax side panel
@@ -42,4 +50,25 @@ difference() {
 	//screw holes in side panel
 	translate([-panelWidth / 2 + 8, panelHeight / 2 - 32, 0]) cylinder(d=7, h=panelThickness, center=true);
 	translate([panelWidth / 2 - 8, panelHeight / 2 - 32, 0]) cylinder(d=7, h=panelThickness, center=true);
+
+	//slot for camera if applicable
+	if(camera == "Pi Camera") {
+		translate([0, panelHeight / 2, 0]) rotate([45,0,0]) cube([20,panelThickness*1.5,100], center=true);
+	}
+}
+
+//raspberry pi mounting
+piSize = piBoardDim(piVersion);
+translate([-piSize[0]/2, -piSize[1] + panelHeight/2 - 20, panelThickness/2]) {
+	% translate([0,0,5 - piSize[2]]) piBoard(piVersion);
+	
+	$fn=10;
+	for(holePos = piHoleLocations(piVersion)) {
+		translate([holePos[0], holePos[1], 0]) {
+			cylinder(d=2, h=5);
+			cylinder(d1=5, d2=2, h=5 - piSize[2] - 0.25);
+
+			translate([0, 0.4, 5]) scale([1.1, 1.1, 1]) cylinder(d=2, h=0.5);
+		}
+	}
 }
