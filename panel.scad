@@ -39,9 +39,18 @@ camera = "Pi Camera"; // [No camera, Pi Camera]
 //Raspberry Pi version
 piVersion = "3B"; // [1B, 1B+, 1A+, 2B, 3B, Zero]
 
+//The style of vent holes you want
+vent = "Slots"; // [No Vent, Slots]
+
+//Any text that you want on the panel, e.g. the hostname of the Pi
+text = "rostockpi.local";
+
 
 include <MCAD/boxes.scad> //used for the base shape of the RoMax side panel
 use <lib/PiHole/PiHole.scad> //used for the raspberry pi mount
+
+piSize = piBoardDim(piVersion);
+piPos = [-piSize[0]/2 - panelWidth/6, -piSize[1] + panelHeight/2 - 20, panelThickness/2];
 
 difference() {
 	//basic shape of romax side panel
@@ -55,11 +64,20 @@ difference() {
 	if(camera == "Pi Camera") {
 		translate([0, panelHeight / 2, 0]) rotate([45,0,0]) cube([20,panelThickness*1.5,100], center=true);
 	}
+
+	if(vent == "Slots") {
+		translate([piPos[0] + piSize[0]/2, piPos[1] + piSize[1] / 2, 0]) {
+			translate([-18,0,0]) cube([3,12,20], center=true);
+			for(x = [-12:6:12]) {
+				translate([x, 0, 0]) cube([3, 20, 20], center=true);
+			}
+			translate([18,0,0]) cube([3,12,20], center=true);
+		}
+	}
 }
 
 //raspberry pi mounting
-piSize = piBoardDim(piVersion);
-translate([-piSize[0]/2, -piSize[1] + panelHeight/2 - 20, panelThickness/2]) {
+translate(piPos) {
 	% translate([0,0,5 - piSize[2]]) piBoard(piVersion);
 	
 	$fn=10;
