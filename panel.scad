@@ -78,15 +78,6 @@ difference() {
 
 //raspberry pi mounting
 translate(piPos) {
-	% translate([0,0,5 - piSize[2]]) piBoard(piVersion);
-	
 	$fn=10;
-	for(holePos = piHoleLocations(piVersion)) {
-		translate([holePos[0], holePos[1], 0]) {
-			cylinder(d=2, h=5);
-			cylinder(d1=5, d2=2, h=5 - piSize[2] - 0.25);
-
-			translate([0, 0.4, 5]) scale([1.1, 1.1, 1]) cylinder(d=2, h=0.5);
-		}
-	}
+	piPosts(piVersion, 5);
 }
