@@ -52,32 +52,62 @@ use <lib/PiHole/PiHole.scad> //used for the raspberry pi mount
 piSize = piBoardDim(piVersion);
 piPos = [-piSize[0]/2 - panelWidth/6, -piSize[1] + panelHeight/2 - 20, panelThickness/2];
 
-difference() {
-	//basic shape of romax side panel
-	roundedBox([panelWidth, panelHeight, panelThickness],2.5,true);
-	
-	//screw holes in side panel
-	translate([-panelWidth / 2 + 8, panelHeight / 2 - 32, 0]) cylinder(d=7, h=panelThickness, center=true);
-	translate([panelWidth / 2 - 8, panelHeight / 2 - 32, 0]) cylinder(d=7, h=panelThickness, center=true);
+assembly();
 
-	//slot for camera if applicable
-	if(camera == "Pi Camera") {
-		translate([0, panelHeight / 2, 0]) rotate([45,0,0]) cube([20,panelThickness*1.5,100], center=true);
+module assembly() {
+	translate([0, -panelHeight / 2 + 32, -panelThickness/2]) rotate([0,180,0]) panel();
+	if(camera == "Pi Camera") piCameraMount();
+}
+
+//hole for the Rostock's thumbscrews
+module screwHole(center=false) {
+	cylinder(d=7, h=panelThickness, center=center);
+}
+
+module screwHoles() {
+	//screw holes in side panel
+	translate([-panelWidth / 2 + 8, panelHeight / 2 - 32, 0]) screwHole(center=true);
+	translate([panelWidth / 2 - 8, panelHeight / 2 - 32, 0]) screwHole(center=true);
+}
+
+module panel() {
+	difference() {
+		//basic shape of romax side panel
+		roundedBox([panelWidth, panelHeight, panelThickness],2.5,true);
+		
+		screwHoles();
+	
+		//slot for camera if applicable
+		if(camera == "Pi Camera") {
+			translate([0, panelHeight / 2, 0]) rotate([45,0,0]) cube([20,panelThickness*1.5,100], center=true);
+		}
+	
+		if(vent == "Slots") {
+			translate([piPos[0] + piSize[0]/2, piPos[1] + piSize[1] / 2, 0]) {
+				translate([-18,0,0]) cube([3,12,20], center=true);
+				for(x = [-12:6:12]) {
+					translate([x, 0, 0]) cube([3, 20, 20], center=true);
+				}
+				translate([18,0,0]) cube([3,12,20], center=true);
+			}
+		}
 	}
 
-	if(vent == "Slots") {
-		translate([piPos[0] + piSize[0]/2, piPos[1] + piSize[1] / 2, 0]) {
-			translate([-18,0,0]) cube([3,12,20], center=true);
-			for(x = [-12:6:12]) {
-				translate([x, 0, 0]) cube([3, 20, 20], center=true);
-			}
-			translate([18,0,0]) cube([3,12,20], center=true);
-		}
+	//raspberry pi mounting
+	translate(piPos) {
+		$fn=10;
+		piPosts(piVersion, 5);
 	}
 }
 
-//raspberry pi mounting
-translate(piPos) {
-	$fn=10;
-	piPosts(piVersion, 5);
+module piCameraMount() {
+	camMountThick = 4;
+
+	difference() {
+		hull() {
+			translate([-panelWidth / 2 + 8, 0, 0]) cylinder(d=20, h=camMountThick);
+			translate([panelWidth / 2 - 8, 0, 0]) cylinder(d=20, h=camMountThick);
+		}
+		screwHoles();
+	}
 }
