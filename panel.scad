@@ -125,6 +125,14 @@ module piCameraMount() {
 		}
 	}
 
+	module cameraNotches() {
+		translate([0,-1,0.75]) rotate([0,45,0]) cube([1,2,1], true);
+		translate([0,-1,2.7]) rotate([0,45,0]) cube([1,2,1], true);
+		translate([0,-1,4.7]) rotate([0,45,0]) cube([1,2,1], true);
+		translate([0,-1,6.7]) rotate([0,45,0]) cube([1,2,1], true);
+		translate([0,-1,8.7]) rotate([0,45,0]) cube([1,2,1], true);
+	}
+
 	horizBar();
 
 	//vertical bar
@@ -147,4 +155,8 @@ module piCameraMount() {
 		translate([0, camCableWidth-6, 0]) rotate([45,0,0]) cube([camCableWidth + 1, camCableWidth, camCableWidth], center=true);
 		rotate([-20,0,0]) translate([0, camWidth/2 - 2, 3]) cube([camWidth-2, camWidth, camWidth], center=true);
 	}
+
+	//notches to hold camera in place
+	translate([camWidth/2, camMountHeight + camWidth/2, 0]) cameraNotches();
+	translate([-camWidth/2, camMountHeight + camWidth/2, 0]) cameraNotches();
 }
