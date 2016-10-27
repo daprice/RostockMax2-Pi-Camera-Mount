@@ -55,11 +55,19 @@ use <lib/PiHole/PiHole.scad> //used for the raspberry pi mount
 piSize = piBoardDim(piVersion);
 piPos = [-piSize[0]/2 - panelWidth/6, -piSize[1] + panelHeight/2 - 20, panelThickness/2];
 
-assembly();
+*assembly();
+
+plate();
 
 module assembly() {
 	color("green") translate([0, -panelHeight / 2 + 32, -panelThickness/2]) rotate([0,180,0]) panel();
 	color("yellow") if(camera == "Pi Camera") piCameraMount();
+}
+
+//plate of all components for printing
+module plate() {
+	translate([0,0,panelThickness/2]) panel();
+	if(camera == "Pi Camera") translate([0, panelHeight / 2 + 10, 0]) piCameraMount();
 }
 
 //hole for the Rostock's thumbscrews
